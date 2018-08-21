@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Info</title>
+    <style>
+        .button {
+          background-color: #6f9bd8;
+          border: none;
+          color: white;
+          padding: 15px 32px;
+          text-align: center;
+          text-decoration: none;
+          display: inline-block;
+          font-size: 16px;
+          margin: 4px 2px;
+          cursor: pointer;
+          font-weight: bold; 
+          border-radius: 8px;
+      }
+
+        #tbl_header th{
+             border: 0px;
+             padding: 10px;
+             font-size: 24px;
+             font-weight: bold;
+             background-color: #5b8dd3;
+             color: white;
+         }
+         #tbl_header td{
+             font-weight: bold;
+         }
+       </style>
+  </head>
+  <body>
+    <center>
+        <table id="tbl_header" style="height: 400; width: 380px;">
+            <tbody>
+            <tr>
+            <th style="width: 380px;">Edit Info</th>
+            </tr>
+            <tr>
+            <td style="width: 380px;">
+                <table style="height: 400px; width: 380px;">
+                    <tbody>
+                    <tr>
+                    <td style="width: 175px;">IMEI :</td>
+                    <td style="width: 200px;" align="center"><input id="imei"></td>
+                    </tr>
+                    <tr>
+                    <td style="width: 175px;">Current Unit Name :</td>
+                    <td style="width: 200px;" align="center"><input id="unit_curr"></td>
+                    </tr>
+                    <tr>
+                    <td style="width: 175px;">New Unit Name :</td>
+                    <td style="width: 200px;" align="center"><input id="unit_new"></td>
+                    </tr>
+                    <tr>
+                    <td style="width: 175px;">Latitude :</td>
+                    <td style="width: 200px;" align="center"><input id="latitude"></td>
+                    </tr>
+                    <tr>
+                    <td style="width: 175px;">Longtitude :</td>
+                    <td style="width: 200px;" align="center"><input id="longtitude"></td>
+                    </tr>
+                    <tr>
+                    <td style="width: 175px;">SSID_Name :</td>
+                    <td style="width: 200px;" align="center"><input id="SSID_name"></td>
+                    </tr>
+                    <tr>
+                    <td style="width: 175px;">SSID_Password :</td>
+                    <td style="width: 200px;" align="center"><input id="SSID_pass"></td>
+                    </tr>
+                    <tr>
+                    <td style="width: 175px;">Line 1 :</td>
+                    <td style="width: 200px;" align="center"><input id="line1"></td>
+                    </tr>
+                    <tr>
+                    <td style="width: 175px;">Line 2 :</td>
+                    <td style="width: 200px;" align="center"><input id="line2"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+            </tr>
+
+            </tbody>
+        </table>
+        <br><button type="button" class="button" onclick="load()">Load</button>      <button type="button" class="button" onclick="update()">Update</button>
+        <h5><p id="status"></p></h5>
+    </center>
+
+    <script src="https://www.gstatic.com/firebasejs/5.3.0/firebase.js"></script>
+    <script src="edit.js"></script>
+    </h3>
+  </body>
+</html>
