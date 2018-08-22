@@ -5,7 +5,7 @@
     <title>Edit Info</title>
     <style>
         .button {
-          background-color: #6f9bd8;
+          background-color: #5b8dd3;
           border: none;
           color: white;
           padding: 15px 32px;
@@ -18,7 +18,34 @@
           font-weight: bold; 
           border-radius: 8px;
       }
-
+        .button1 {
+          background-color: #5b8dd3;
+          border: none;
+          color: white;
+          padding: 10px 15px;
+          text-align: right;
+          text-decoration: none;
+          display: inline-block;
+          font-size: 16px;
+          margin: 4px 2px;
+          cursor: pointer;
+          font-weight: bold; 
+          border-radius: 8px;
+      }
+      .button3 {
+          background-color: #5b8dd3;
+          border: none;
+          color: white;
+          padding: 5px 5px;
+          text-align: right;
+          text-decoration: none;
+          display: inline-block;
+          font-size: 16px;
+          margin: 4px 2px;
+          cursor: pointer;
+          font-weight: bold; 
+          border-radius: 8px;
+      }
         #tbl_header th{
              border: 0px;
              padding: 10px;
@@ -37,11 +64,11 @@
         <table id="tbl_header" style="height: 400; width: 380px;">
             <tbody>
             <tr>
-            <th style="width: 380px;">Edit Info</th>
+            <th style="width: 450px;">Edit Info</th>
             </tr>
             <tr>
-            <td style="width: 380px;">
-                <table style="height: 400px; width: 380px;">
+            <td style="width: 450px;">
+                <table style="height: 400px; width: 460px;">
                     <tbody>
                     <tr>
                     <td style="width: 175px;">IMEI :</td>
@@ -51,6 +78,9 @@
                     <td style="width: 175px;">Current Unit Name :</td>
                     <td style="width: 200px;" align="center"><input id="unit_curr"></td>
                     </tr>
+                    <tr><td><td><td>
+                    <button type="button" class="button1" onclick="load()">Load</button>
+                    </td></td></td></tr>
                     <tr>
                     <td style="width: 175px;">New Unit Name :</td>
                     <td style="width: 200px;" align="center"><input id="unit_new"></td>
@@ -79,6 +109,18 @@
                     <td style="width: 175px;">Line 2 :</td>
                     <td style="width: 200px;" align="center"><input id="line2"></td>
                     </tr>
+                    <tr>
+                    <td style="width: 175px;">Temp :</td>
+                    <td style="width: 200px;" align="center"><input id="temp"></td>
+                    <td><button type="button" class="button3" onclick="tempPlus()">+</button>
+                    <button type="button" class="button3" onclick="tempMinus()">-</button></td>
+                    </tr>
+                    <tr>
+                    <td style="width: 175px;">Humid :</td>
+                    <td style="width: 200px;" align="center"><input id="humid"></td>
+                    <td><button type="button" class="button3" onclick="humidPlus()">+</button>
+                    <button type="button" class="button3" onclick="humidMinus()">-</button></td>
+                    </tr>
                     </tbody>
                 </table>
             </td>
@@ -86,7 +128,7 @@
 
             </tbody>
         </table>
-        <br><button type="button" class="button" onclick="load()">Load</button>      <button type="button" class="button" onclick="update()">Update</button>
+        <br><button type="button" class="button" onclick="update()">Update</button>
         <h5><p id="status"></p></h5>
     </center>
 
