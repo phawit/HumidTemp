@@ -9,8 +9,11 @@ var config = {
 firebase.initializeApp(config);
 var database = firebase.database();
 
+var iTemp,iHumid;
+var imei, unit_curr, unit_new, line1, line2;
+
 function update(){
-  var imei, unit_curr, unit_new, line1, line2;
+  
 
   // Get the value of the input field with id="numb"
   imei = document.getElementById("imei").value;
@@ -20,6 +23,8 @@ function update(){
   longtitude = document.getElementById("longtitude").value;
   SSID_name = document.getElementById("SSID_name").value;
   SSID_pass = document.getElementById("SSID_pass").value;
+  temp = document.getElementById("temp").value;
+  humid = document.getElementById("humid").value;
   line1 = document.getElementById("line1").value;
   line2 = document.getElementById("line2").value;
 
@@ -52,7 +57,14 @@ function update(){
             data['SSID_pass'] = SSID_pass;
             data['Line1'] = line1;
             data['Line2'] = line2;
-            db_id.set(data);
+            data['Pub'] = 1;
+            data['Temperature'] = temp;
+            data['Humid'] = humid;
+            data['iTemp'] = iTemp;
+            data['iHumid'] = iHumid;
+            console.log(iTemp);
+            console.log(iHumid);
+            db_id.set(data);           
             stat = 'Status: Update Success';
             document.getElementById("status").innerHTML = stat;
           }
@@ -96,7 +108,14 @@ function load(){
             document.getElementById("SSID_pass").value = data['SSID_pass'];
             document.getElementById("line1").value = data['Line1'];
             document.getElementById("line2").value = data['Line2'];
-            
+            document.getElementById("temp").value = data['Temperature'];
+            document.getElementById("humid").value = data['Humid'];
+
+            iTemp = data['iTemp'];
+            iHumid = data['iHumid'];
+            console.log(iTemp);
+            console.log(iHumid);
+                  
             stat = 'Status: Load Success';
             document.getElementById("status").innerHTML = stat;
           }
@@ -104,4 +123,35 @@ function load(){
       }
   });
   });
+}
+
+
+var it=0,ih=0;
+function tempPlus(){
+  it++;
+  iTemp = it*0.01;
+  temp_x = document.getElementById("temp").value;
+  document.getElementById("temp").value = (Number.parseFloat(temp_x)+0.01).toFixed(2);
+  console.log(iTemp);
+}
+function tempMinus(){
+  it--;
+  iTemp = it*0.01;
+  temp_x = document.getElementById("temp").value;
+  document.getElementById("temp").value = (Number.parseFloat(temp_x)-0.01).toFixed(2);
+  console.log(iTemp);
+}
+function humidPlus(){
+  ih++;
+  iHumid = ih*0.01;
+  humid_x = document.getElementById("humid").value;
+  document.getElementById("humid").value = (Number.parseFloat(humid_x)+0.01).toFixed(2);
+  console.log(iHumid);
+}
+function humidMinus(){
+  ih--;
+  iHumid = ih*0.01;
+  humid_x = document.getElementById("humid").value;
+  document.getElementById("humid").value = (Number.parseFloat(humid_x)-0.01).toFixed(2);
+  console.log(iHumid);
 }
