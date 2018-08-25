@@ -1,8 +1,10 @@
 /*D4 <---> LED_online<-->3V
  *DHT22<-->D6  
- *SWITCH<-->D3 //GPIO 0 (Flash Button)
- *SCL<-->D1,D2
- *SDA<-->D2,D1
+ *SWITCH<-->D8 //GPIO 15 touch switch
+ *SCL<-->D1
+ *SDA<-->D2
+ *LED_online<-->D4  //yellow
+ *LED_LED_savemode<-->D7;   //blue
 */
 
 
@@ -21,9 +23,10 @@ DHT dht(DHTPIN, DHTTYPE);
 std::unique_ptr<ESP8266WebServer> server;
 LiquidCrystal_I2C lcd(0x27, 20, 4);
 
-const int interruptPin = 0; //GPIO 0 (Flash Button) 
+const int interruptPin = 15;// 0; //GPIO 0 (Flash Button) 
 const int LED=2;   //On board blue LED 
 const int LED_online=D4;    //16;   //D0 led out
+const int LED_savemode=D7;
 long time_start,time_stop;
 int sta=1;
 
@@ -41,7 +44,7 @@ void handleRoot() {
   server->send(200, "text/plain", "hello from esp8266!");
 }
 
-void handleNotFound() {
+void handleNotFouttttttttttttttttttttttttttttttttttttttttttttttnd() {
   String message = "File Not Found\n\n";
   message += "URI: ";
   message += server->uri();
@@ -64,11 +67,14 @@ void setup() {
   
   pinMode(LED,OUTPUT); 
   pinMode(LED_online,OUTPUT);  //led out
+  pinMode(LED_savemode,OUTPUT);  //led out
   pinMode(interruptPin, INPUT); 
   pinMode(14, INPUT);  //touch switch 
   attachInterrupt(digitalPinToInterrupt(interruptPin), handleInterrupt, RISING); 
   digitalWrite(LED,HIGH); //LED off 
   digitalWrite(LED_online,HIGH); //LED off 
+  digitalWrite(LED_savemode,HIGH); //LED off 
+
 
   configTime(timezone, dst, "pool.ntp.org", "time.nist.gov");     //ดึงเวลาจาก Server
     Serial.println("\nWaiting for time");
@@ -101,6 +107,7 @@ void loop() {
     Serial.println("connected...yeey :)");
     sta = 1;
     digitalWrite(LED,HIGH); //LED off
+    digitalWrite(LED_savemode,HIGH); //LED off
 
     }
   //check connection  
@@ -132,6 +139,7 @@ void handleInterrupt() {
     if(sta==0){   //out from save mode
       sta = 1;
       digitalWrite(LED,HIGH); //LED off
+      digitalWrite(LED_savemode,HIGH); //LED off
       Serial.println("OUT from save mode");
       ESP.reset();
       
@@ -143,6 +151,7 @@ void handleInterrupt() {
            Serial.println("save mode");
            sta = 0;
            digitalWrite(LED,LOW); //LED on 
+           digitalWrite(LED_savemode,LOW); //LED on 
            break;
         }
       }
