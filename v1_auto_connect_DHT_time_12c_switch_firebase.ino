@@ -38,7 +38,9 @@ float iHumid=0,iTemp=0;
 float temp,humid,hic;
 String flag,water;
 int train,rest,b;
-int timeMin = -1;
+unsigned long timeUpdateLog = 0;
+unsigned long timeUpdateData = 0;
+unsigned long timeBacklight = 0;
 
 int timezone = 7 * 3600;                    //ตั้งค่า TimeZone ตามเวลาประเทศไทย
 int dst = 0;   
@@ -123,13 +125,17 @@ void loop() {
   if(WiFi.status() == WL_CONNECTED){
     Serial.println("connecte");
     digitalWrite(LED_online,LOW); //LED on
-    pubFirebase("A03",0);     //unit_id: A01,A02,A03,.. , float r: random val to make temp for another unit
-    pubFirebase("A01",0.8);
-    pubFirebase("A02",0.3);
-    pubFirebase("A04",-0.3);
 
-    if(int(newtime->tm_min)-timeMin >= 1){        //time update log firebase 1 min
-      timeMin = int(newtime->tm_min);
+    if(millis()-timeUpdateLog >= 10000){        //time update log firebase 1 min
+      timeUpdateLog = millis();
+      pubFirebase("A03",0);     //unit_id: A01,A02,A03,.. , float r: random val to make temp for another unit
+      pubFirebase("A01",0.8);
+      pubFirebase("A02",0.3);
+      pubFirebase("A04",-0.3);
+    }
+    
+    if(millis()-timeUpdateData >= 60000){        //time update log firebase 1 min
+      timeUpdateData = millis();
       logFirebase("A03",0);
       logFirebase("A01",0.8);
       logFirebase("A02",0.3);
@@ -144,12 +150,14 @@ void loop() {
   }
   //--------------------------
    if(b==1){   
-    delay(3000);
-    lcd.noBacklight();
-    b = 0;
+    if(millis()-timeBacklight >= 3000){        //time update log firebase 1 min
+      timeBacklight = millis();
+      lcd.noBacklight();
+      b = 0;
+    }
   }
   //---------------------------
-  delay(5000);   //time update current firebase 5sec
+  delay(300);   //time update current firebase 5sec
     
 }
 
