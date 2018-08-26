@@ -21,7 +21,7 @@
 #define DHTTYPE DHT22
 #define FIREBASE_HOST "humidtemp-59706.firebaseio.com"
 #define FIREBASE_AUTH "i0FITeXlp0SgwgubVa580b3Zy42KX0Lw1FXDV3rB"   //Database Secret
- 
+
 DHT dht(DHTPIN, DHTTYPE);
 std::unique_ptr<ESP8266WebServer> server;
 LiquidCrystal_I2C lcd(0x27, 20, 4);
@@ -34,12 +34,11 @@ long time_start,time_stop;
 int sta=1;
 int pub=0;
 float iHumid=0,iTemp=0;
-String UnitID="A03";
 
 float temp,humid,hic;
 String flag,water;
 int train,rest,b;
-int timeMin = -1,timeSec = 0;
+int timeMin = -1;
 
 int timezone = 7 * 3600;                    //ตั้งค่า TimeZone ตามเวลาประเทศไทย
 int dst = 0;   
@@ -92,9 +91,6 @@ void setup() {
     }
     Serial.println("");
     lcd.noBacklight();
-
-  iHumid = Firebase.getInt("ID/"+UnitID+"/Current/iHumid");
-  iTemp = Firebase.getInt("ID/"+UnitID+"/Current/iTemp");
   
 }
 
@@ -118,9 +114,6 @@ void loop() {
 
     //if you get here you have connected to the WiFi
     Serial.println("connected...yeey :)");
-    iHumid = Firebase.getInt("ID/"+UnitID+"/Current/iHumid");
-    iTemp = Firebase.getInt("ID/"+UnitID+"/Current/iTemp");
-  
     sta = 1;
     digitalWrite(LED,HIGH); //LED off
     digitalWrite(LED_savemode,HIGH); //LED off
@@ -130,16 +123,11 @@ void loop() {
   if(WiFi.status() == WL_CONNECTED){
     Serial.println("connecte");
     digitalWrite(LED_online,LOW); //LED on
+    pubFirebase("A03",0);     //unit_id: A01,A02,A03,.. , float r: random val to make temp for another unit
+    pubFirebase("A01",0.8);
+    pubFirebase("A02",0.3);
+    pubFirebase("A04",-0.3);
 
-    
-    if(millis()-timeSec >= 10000){        //time update log firebase 10 sec
-      timeSec = millis();
-      pubFirebase("A03",0);     //unit_id: A01,A02,A03,.. , float r: random val to make temp for another unit
-      pubFirebase("A01",0.8);
-      pubFirebase("A02",0.3);
-      pubFirebase("A04",-0.3);
-    }
-    
     if(int(newtime->tm_min)-timeMin >= 1){        //time update log firebase 1 min
       timeMin = int(newtime->tm_min);
       logFirebase("A03",0);
@@ -161,7 +149,7 @@ void loop() {
     b = 0;
   }
   //---------------------------
-  delay(200);   //time update current firebase 5sec
+  delay(5000);   //time update current firebase 5sec
     
 }
 
@@ -328,14 +316,13 @@ void pubFirebase(String unit_id,float r){     //unit_id: A01,A02,A03,.. , float 
   Serial.print("get Pub:  ");
   Serial.println(pub);
   if(pub == 0){
-    Serial.println("Firebase setting NOT UPDATE..");
+    Serial.println("Firebase NOT UPDATE..");
   }
   else{
-    Serial.println("Firebase setting UPDATE..");
-    Firebase.setInt("ID/"+unit_id+"/Current/Pub",0);
+    Serial.println("Firebase UPDATE..");
     iHumid = Firebase.getInt("ID/"+unit_id+"/Current/iHumid");
     iTemp = Firebase.getInt("ID/"+unit_id+"/Current/iTemp");
-    
+    Firebase.setInt("ID/"+unit_id+"/Current/Pub",0);
     pub = 0;
     
   }
@@ -377,6 +364,6 @@ void logFirebase(String unit_id,float r){
      Firebase.setInt("ID/"+unit_id+"/Log/"+timeStamp+"/Rest", rest);
      Firebase.setString("ID/"+unit_id+"/Log/"+timeStamp+"/Water", water);
      //Firebase.setInt("ID/"+unit_id+"/Log/"+timeStamp+"/Latitude", latitude);
-     //Firebase.setString("ID/"+unit_id+"/Log/"+timeStamp+"/Longtitude", longtitude); 
+     //Firebase.setString("ID/"+unit_id+"/Log"+timeStamp+"/Longtitude", longtitude); 
      
 }
