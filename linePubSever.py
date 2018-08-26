@@ -35,7 +35,7 @@ while(1):
   print(Min)
   if Min == 8:
     once = 0
-  if ((Hr == 0 or Hr == 1 or Hr == 1 or Hr == 19) and Min != 46) and once==0 :
+  if ((Hr == 8 or Hr == 10 or Hr == 12 or Hr == 14 or Hr == 16 or Hr == 21) and Min == 0) and once==0 :
     print("line notify")
 
     #get data from firebase
