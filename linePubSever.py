@@ -29,10 +29,7 @@ while(1):
   print(current_time)
 
   #print(once)
-  print("hour: ") 
-  print(Hr)
-  print("\nminute: ") 
-  print(Min)
+  
   if Min == 8:
     once = 0
   if ((Hr == 8 or Hr == 10 or Hr == 12 or Hr == 14 or Hr == 16 or Hr == 21) and Min == 0) and once==0 :
@@ -73,9 +70,14 @@ while(1):
     url = 'https://notify-api.line.me/api/notify'
     for i in range(len(unit_id)):
       
-      message = unit[i]+"\n"+"Temp: "+str(temp[i])+" °C \n"+"Humid: "+str(humid[i])+" %\n"+"Train: "+str(train[i])
-      message += " min\n"+"Rest: "+str(rest[i])+" min\n"+"Water: "+str(water[i])+" L/hr\n"
-      message += "https://humidtemp-59706.firebaseapp.com/"
+      messageTH =  unit[i]+dayNight
+      messageTH += "\n⛰Flag: "+flag[i]
+      messageTH += "\n⛰Temperature: "+str(temp[i])+" °C"
+      messageTH += "\n⛰Humid: "+str(humid[i])+" %"  
+      messageTH += "\n⛰Water: "+str(water[i])+" L/hr"
+      messageTH += "\n⛰Train: "+str(train[i])+" min"
+      messageTH += "\n⛰Rest: "+str(rest[i])+" min"
+      messageTH += "\nhttps://humidtemp-59706.firebaseapp.com/"
 
       #line Thai
       if(flag[i]=='Red'):
@@ -124,7 +126,7 @@ while(1):
       print(r.text)
       once = 1
 
-  time.sleep(5)
+  time.sleep(10)
 
 
 
