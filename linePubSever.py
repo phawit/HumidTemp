@@ -70,15 +70,6 @@ while(1):
     url = 'https://notify-api.line.me/api/notify'
     for i in range(len(unit_id)):
       
-      messageTH =  unit[i]+dayNight
-      messageTH += "\n⛰Flag: "+flag[i]
-      messageTH += "\n⛰Temperature: "+str(temp[i])+" °C"
-      messageTH += "\n⛰Humid: "+str(humid[i])+" %"  
-      messageTH += "\n⛰Water: "+str(water[i])+" L/hr"
-      messageTH += "\n⛰Train: "+str(train[i])+" min"
-      messageTH += "\n⛰Rest: "+str(rest[i])+" min"
-      messageTH += "\nhttps://humidtemp-59706.firebaseapp.com/"
-
       #line Thai
       if(flag[i]=='Red'):
         flag[i] = '♦️'
@@ -95,6 +86,16 @@ while(1):
         dayNight = "🔆"
       else: 
         dayNight = "🌜"
+
+      message =  unit[i]+dayNight
+      message += "\n⛰Flag: "+flag[i]
+      message += "\n⛰Temperature: "+str(temp[i])+" °C"
+      message += "\n⛰Humid: "+str(humid[i])+" %"  
+      message += "\n⛰Water: "+str(water[i])+" L/hr"
+      message += "\n⛰Train: "+str(train[i])+" min"
+      message += "\n⛰Rest: "+str(rest[i])+" min"
+      message += "\nhttps://humidtemp-59706.firebaseapp.com/"
+
       
 
       messageTH =  unit[i]+dayNight
@@ -133,7 +134,6 @@ while(1):
 
 
  
-
 
 
 
