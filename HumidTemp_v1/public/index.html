@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>อุณหภูมิ และความชื้นสัมพัทธ์</title>
+    <style>
+      .button {
+          background-color: #6f9bd8;
+          border: none;
+          color: white;
+          padding: 15px 32px;
+          text-align: center;
+          text-decoration: none;
+          display: inline-block;
+          font-size: 16px;
+          margin: 4px 2px;
+          cursor: pointer;
+          font-weight: bold; 
+          border-radius: 8px;
+      }
+      #edit a { color:white;
+        font-weight: bold; }
+
+      #tbl a { color:black;
+        font-weight: bold; }
+      a:link { text-decoration: none;}
+      a:visited { text-decoration: none; }
+      a:hover { text-decoration: none; }
+      a:focus { text-decoration: none; }
+      a:hover, a:active { text-decoration: none; }
+       /* Set the size of the div element that contains the map */
+      #map {
+        height: 650px;  /* The height is 400 pixels */
+        width: 100%;  /* The width is the width of the web page */
+       }
+
+      #tbl {
+        font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      #tbl td, #tbl th {
+          border: 1px solid #ddd;
+          padding: 4px;
+          font-size: 12px;
+      }
+
+      #tbl tr:nth-child(even){background-color: #f2f2f2;}
+
+      #tbl tr:hover {background-color: #ddd;}
+
+      #tbl th {
+          padding-top: 6px;
+          padding-bottom: 6px;
+          text-align: center;
+          background-color: #97B7E3;
+          color: white;
+      }
+
+      #tbl tbody {
+            display:block;
+            height:650px;
+            overflow:auto;
+        }
+    </style>
+  </head>
+  <body>
+    <!-- <center><strong><h3><p style="display:inline">อุณภูมิ และความชื้นสัมพัทธ์</p></h3></strong></center><div align="right"><h4><p id="edit" style="display:inline"></p></h4></div> -->
+    <center>
+      <table style="height: 50px; width: 1350px;" bgcolor="#5b8dd3">
+          <tbody>
+          <tr>
+          <td style="width: 200px;" align="center" valign="top"></td>
+          <td style="width: 950px; " align="center" valign="center"><strong><h3><font color="white">อุณหภูมิ และความชื้นสัมพัทธ์</font></h3></strong></td>
+          <td style="width: 200px; " align="right" valign="center">
+              <a href="edit.html" target="_blank">
+                <input type="button" class="button" value="แก้ไข" />
+                </a>
+          </td>
+          </tr>
+          </tbody>
+        </table>
+      <table style="height: 650px; width: 1350px;">
+        <tbody>
+        <tr>
+        <td style="width: 900px;" align="center" valign="top"><div id="map"></div></td>
+        <td style="width: 450px; " align="center" valign="top"><div id="tbl"></div></td>
+        </tr>
+        </tbody>
+      </table>
+    </center>
+    
+    <!--The div element for the map -->
+    
+    <script src="https://www.gstatic.com/firebasejs/5.3.0/firebase.js"></script>
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+    <script src="map.js"></script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA4XntoY8aPompPLgk6SYHcbIFfGBQ0WQM&callback=initMap" type="text/javascript">
+    </script>
+  </body>
+</html>

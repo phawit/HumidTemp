@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Humid & Temperature Info</title>
+    <style>
+      #tbl_header tr, #tbl_header td{
+           border: 0px;
+           padding: 0px;
+           font-size: 18px;
+           font-weight: bold;
+       }
+
+       #tbl {
+         font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+         border-collapse: collapse;
+         width: 100%;
+       }
+ 
+       #tbl td, #tbl th {
+           border: 1px solid #ddd;
+           padding: 4px;
+           font-size: 12px;
+       }
+ 
+       #tbl tr:nth-child(even){background-color: #f2f2f2;}
+ 
+       #tbl tr:hover {background-color: #ddd;}
+ 
+       #tbl th {
+           padding-top: 6px;
+           padding-bottom: 6px;
+           text-align: center;
+           background-color: #97B7E3;
+           color: white;
+       }
+
+       #tbl tbody {
+            display:block;
+            height:650px;
+            overflow:auto;
+        }
+     </style>
+  </head>
+  <body>
+    <center>
+      <table id="tbl_header" style="height: 80px; width: 1350px;">
+          <tbody>
+          <tr>
+          <td style="width: 1350px; " align="center" valign="center" bgcolor="#5b8dd3"><font color="white">อุณหภูมิ และความชื้นสัมพัทธ์</font></td>
+          </tr>
+          <tr>
+          <td style="width: 1350px; " align="center" valign="center" bgcolor="#7ba3db"><font color="white"><div id="unitname"></div></font></td>
+          </tr>
+          </tbody>
+        </table>
+    
+
+    <table style="height: 650px; width: 1350px;">
+      <tbody>
+      <tr>
+      <td style="width: 900px;" align="center" valign="center"><div id="chartContainer" style="height: 500px; width: 100%;"></div></td>
+      <td style="width: 450px; " align="center" valign="top"><div id="tbl"></div></td>
+      </tr>
+      <tr>
+      <td style="width: 900px;" align="center" valign="top"><select id="myoptions" style="height: 30px; width: 150px" ></select>
+        <!-- <input type="button" onclick="UpdateChart()" value="Update" /></td> -->
+        <input type="button" onclick="UpdateChart()" value="อัพเดต" /></td>
+      <td style="width: 450px; " align="center" valign="top"></td>
+      </tr>
+      </tbody>
+    </table>
+    </center>
+    
+    <script src="https://www.gstatic.com/firebasejs/5.3.0/firebase.js"></script>
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+    <script src="info.js"></script>
+    </h3>
+  </body>
+</html>
