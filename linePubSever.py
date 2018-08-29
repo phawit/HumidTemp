@@ -1,5 +1,10 @@
 #!/usr/local/bin/python
 # -*- coding: utf-8 -*-
+# encoding=utf8  
+import sys  
+
+reload(sys)  
+sys.setdefaultencoding('utf8')
 
 import requests
 import pyrebase
@@ -32,7 +37,7 @@ while(1):
   
   if Min == 8:
     once = 0
-  if ((Hr == 8 or Hr == 10 or Hr == 12 or Hr == 14 or Hr == 16 or Hr == 21) and Min == 0) and once==0 :
+  if ((Hr == 8 or Hr == 10 or Hr == 12 or Hr == 14 or Hr == 16 or Hr == 5) and Min == 0) and once==0 :
     print("line notify")
 
     #get data from firebase
@@ -134,7 +139,6 @@ while(1):
 
 
  
-
 
 
 
