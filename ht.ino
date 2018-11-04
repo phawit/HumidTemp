@@ -17,6 +17,7 @@
 #include <time.h>
 #include <LiquidCrystal_I2C.h>
 #include <FirebaseArduino.h>
+#include <EEPROM.h>
 
 #define DHTPIN D6
 #define DHTTYPE DHT22
@@ -38,8 +39,8 @@ int sta=1;
 int sta2=0;
 int staSet=0;
 int staAdd = 0;
-float staTemp = 0;
-float staHumid = 0;
+float staTemp;
+float staHumid;
 
 int pub=0;
 float iHumid=0,iTemp=0;
@@ -83,6 +84,10 @@ void setup() {
   lcd.begin();
   Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
   
+  EEPROM.begin(512);
+  staTemp = EEPROM_read(0, 5).toFloat();
+  staHumid = EEPROM_read(10, 5).toFloat();
+  
   pinMode(LED,OUTPUT); 
   pinMode(LED_online,OUTPUT);  //led out
   pinMode(LED_savemode,OUTPUT);  //led out
@@ -112,34 +117,39 @@ void setup() {
 }
 
 void loop() {
+  
   while(sta2==1){
+   
     if(staSet==0){
-      Serial.print("temp**********************************");
-      Serial.println(staTemp);
-      Serial.print("humid**********************************");
-      Serial.println(staHumid);
+      
+      Serial.print("staTemp::");  Serial.println(staTemp);
       delay(100);
-      lcd.setCursor(8, 1); lcd.print("       ");
-      delay(200);
-      lcd.setCursor(8, 1); lcd.print(temp+staTemp);
+      lcd.setCursor(8, 1); lcd.print("            ");
+      delay(300);
+      lcd.setCursor(8, 1); lcd.print(temp+staTemp);  lcd.setCursor(14, 1); lcd.print("t"); lcd.print(staTemp);
       delay(200);
          
     }
     else if(staSet==1){
-      Serial.print("temp**********************************");
-      Serial.println(staTemp);
-      Serial.print("humid**********************************");
-      Serial.println(staHumid);   
+      
+      Serial.print("staHumid::");  Serial.println(staHumid);
+      
       delay(100);
-      lcd.setCursor(8, 2); lcd.print("       ");
-      delay(200);
-      lcd.setCursor(8, 2); lcd.print(humid+staHumid);
+      lcd.setCursor(8, 2); lcd.print("            ");
+      delay(300);
+      lcd.setCursor(8, 2); lcd.print(humid+staHumid); lcd.setCursor(14, 2); lcd.print("h"); lcd.print(staHumid);
       delay(200);
       
     }
     else{
       Serial.println("out from setting mode**********************************");
+      
       lcd.noBacklight();
+      lcd.clear();
+      EEPROM_write(0, String(staTemp));
+      EEPROM_write(10, String(staHumid));
+      Serial.println("SAVED .. ");
+      
       staSet = 0;
       sta2 = 0;
       staAdd = 0;
@@ -163,13 +173,17 @@ void loop() {
     //--------------------------------
   }
   else{
+    
+    delay(300);
     Serial.println("save mode");
     WiFiManager wifiManager;  
     //wifiManager.resetSettings();
-    wifiManager.autoConnect("HumidTempA01");
+    wifiManager.autoConnect("HT-A03");
 
     //if you get here you have connected to the WiFi
     Serial.println("connected...yeey :)");
+    
+    lcd.clear();
     sta = 1;
     digitalWrite(LED,HIGH); //LED off
     digitalWrite(LED_savemode,HIGH); //LED off
@@ -203,7 +217,7 @@ void loop() {
     digitalWrite(LED_online,LOW); //LED off
   }
   //--------------------------
-   if(b==1){   
+   if(b==1 && sta2!=1){   
     if(millis()-timeBacklight >= 3000){        //time update log firebase 1 min
       timeBacklight = millis();
       lcd.noBacklight();
@@ -246,6 +260,7 @@ void handleInterrupt() {
       digitalWrite(LED,HIGH); //LED off
       digitalWrite(LED_savemode,HIGH); //LED off
       Serial.println("OUT from save mode");
+      lcd.clear();
       ESP.reset();
       
     }
@@ -257,6 +272,11 @@ void handleInterrupt() {
            sta = 0;
            digitalWrite(LED,LOW); //LED on 
            digitalWrite(LED_savemode,LOW); //LED on 
+
+           lcd.backlight();
+           lcd.clear(); lcd.setCursor(0,1); lcd.print("    Wifi Hospot!    ");
+           lcd.setCursor(0,2); lcd.print("*******HT-A03*******");
+    
            break;
         }
       }
@@ -276,9 +296,23 @@ void handleInterrupt2() {
       while(digitalRead(interruptPin2)==1){
         if(millis()-time_start > 3000){
            Serial.println("setting mode");
+           lcd.clear();
+           lcd.setCursor(5, 0); lcd.print("Setting..."); 
+           lcd.setCursor(0, 1); lcd.print("Temp  : ");
+           lcd.setCursor(0, 2); lcd.print("Humid : ");
+           
+      
            lcd.backlight();
            sta2 = 1;
-           
+
+           Serial.print("staTEMP EEPROM:::");
+           staTemp = EEPROM_read(0, 5).toFloat();
+           Serial.println(staTemp);
+
+           Serial.print("staHUMID EEPROM:::");
+           staHumid = EEPROM_read(10, 5).toFloat();
+           Serial.println(staHumid);   
+               
            break;
         }
       }
@@ -345,7 +379,7 @@ void calTemp(){
 }
 
 void pubLCD(){
-  lcd.clear();
+  //lcd.clear();
   Serial.println(NowString() + " "+ NowString2()); lcd.setCursor(0, 0); lcd.print(NowString2() + "     " + NowString());
   Serial.print("Temp: ");    Serial.print(temp+staTemp);   lcd.setCursor(0, 1); lcd.print("Temp  : "); lcd.print(temp+staTemp);
   Serial.print("\tHumid: "); Serial.print(humid+staHumid);  lcd.setCursor(0, 2); lcd.print("Humid : "); lcd.print(humid+staHumid); 
@@ -491,4 +525,26 @@ void logFirebase(String unit_id,float r){
      //Firebase.setString("ID/"+unit_id+"/Log"+timeStamp+"/Longtitude", longtitude); 
      Serial.println("Finish"); 
      
+}
+
+String EEPROM_read(int index, int length) {
+  String text = "";
+  char ch = 1;
+
+  for (int i = index; (i < (index + length)) && ch; ++i) {
+  if (ch = EEPROM.read(i)) {
+  text.concat(ch);
+  }
+  }
+  return text;
+}
+
+int EEPROM_write(int index, String text) {
+  for (int i = index; i < text.length() + index; ++i) {
+  EEPROM.write(i, text[i - index]);
+  }
+  EEPROM.write(index + text.length(), 0);
+  EEPROM.commit();
+  
+  return text.length() + 1;
 }
