@@ -34,13 +34,15 @@ const int interruptPinAdd = 13;
 const int LED=2;   //On board blue LED 
 const int LED_online=D4;    //16;   //D0 led out
 const int LED_savemode=D3;
-long time_start,time_stop;
+long time_start,time_start1,time_stop;
 int sta=1;
 int sta2=0;
 int staSet=0;
 int staAdd = 0;
 float staTemp;
 float staHumid;
+volatile byte state = LOW;
+int staContinous = 0;
 
 int pub=0;
 float iHumid=0,iTemp=0;
@@ -95,9 +97,9 @@ void setup() {
   pinMode(interruptPin2, INPUT); 
   pinMode(interruptPinAdd, INPUT); 
   
-  attachInterrupt(digitalPinToInterrupt(interruptPin), handleInterrupt, RISING); 
+  attachInterrupt(digitalPinToInterrupt(interruptPin), handleInterrupt, RISING); //RISING
   attachInterrupt(digitalPinToInterrupt(interruptPin2), handleInterrupt2, RISING);
-  attachInterrupt(digitalPinToInterrupt(interruptPinAdd), handleInterruptAdd, RISING); 
+  attachInterrupt(digitalPinToInterrupt(interruptPinAdd), handleInterruptAdd, CHANGE); 
   
    
   digitalWrite(LED,HIGH); //LED off 
@@ -116,32 +118,134 @@ void setup() {
   
 }
 
+void handleInterrupt() {
+  
+  
+
+ if(sta2==1){
+
+  if(staSet==0){
+      staTemp = staTemp-0.01;
+      Serial.print("Temp: ");    Serial.print(temp+staTemp);   
+      lcd.setCursor(8, 1); lcd.print(temp+staTemp); lcd.setCursor(14, 1); lcd.print("t"); lcd.print(staTemp);
+  
+    }
+    if(staSet==1){
+      staHumid = staHumid-0.01;
+      Serial.print("\tHumid: "); Serial.print(humid+staHumid);  //lcd.setCursor(0, 2); lcd.print("Humid : "); lcd.print(humid+staHumid); 
+      lcd.setCursor(8, 2); lcd.print(humid+staHumid); lcd.setCursor(14, 2); lcd.print("h"); lcd.print(staHumid);
+    }
+    
+      
+ }
+ else{
+    
+    Serial.println("Interrupt Detected");
+    lcd.backlight();
+    b = 1;
+    
+    if(sta==0){   //out from save mode
+      sta = 1;
+      digitalWrite(LED,HIGH); //LED off
+      digitalWrite(LED_savemode,HIGH); //LED off
+      Serial.println("OUT from save mode");
+      lcd.clear();
+      ESP.reset();
+      
+    }
+    else{   //to savemode
+      time_start = millis();
+      while(digitalRead(interruptPin)==1){
+        if(millis()-time_start > 3000){
+           Serial.println("save mode");
+           sta = 0;
+           digitalWrite(LED,LOW); //LED on 
+           digitalWrite(LED_savemode,LOW); //LED on 
+
+           lcd.backlight();
+           lcd.clear(); lcd.setCursor(0,1); lcd.print("    Wifi Hospot!    ");
+           lcd.setCursor(0,2); lcd.print("*******HT-A03*******");
+    
+           break;
+        }
+      }
+    } 
+
+ }
+}
+
+
+
 void loop() {
   
   while(sta2==1){
    
-    if(staSet==0){
-      
+    while(staSet==0){
+          
+      while(digitalRead(interruptPinAdd)==1){
+        if(millis()-time_start1 > 1000){
+           Serial.println("contious mode");
+           lcd.setCursor(8, 1); lcd.print(temp+staTemp); lcd.setCursor(14, 1); lcd.print("t"); lcd.print(staTemp);
+           staTemp += 0.01;
+           
+           
+           delay(50);
+           
+        }
+        
+      }
+
+      while(digitalRead(interruptPin)==1){
+        if(millis()-time_start1 > 1000){
+           Serial.println("contious mode");
+           lcd.setCursor(8, 1); lcd.print(temp+staTemp); lcd.setCursor(14, 1); lcd.print("t"); lcd.print(staTemp);
+           staTemp -= 0.01;
+           
+           
+           delay(50);
+           
+        }
+        
+      }
+     
       Serial.print("staTemp::");  Serial.println(staTemp);
-      delay(100);
-      lcd.setCursor(8, 1); lcd.print("            ");
-      delay(300);
-      lcd.setCursor(8, 1); lcd.print(temp+staTemp);  lcd.setCursor(14, 1); lcd.print("t"); lcd.print(staTemp);
-      delay(200);
-         
+      Serial.println(digitalRead(interruptPinAdd));
+      
+      lcd.setCursor(8, 1); lcd.print("     "); lcd.setCursor(14, 1); lcd.print("      ");
+      delay(500);
+      lcd.setCursor(8, 1); lcd.print(temp+staTemp); lcd.setCursor(14, 1); lcd.print("t"); lcd.print(staTemp);
+      delay(500);
+    
     }
-    else if(staSet==1){
+    
+    while(staSet==1){
+      while(digitalRead(interruptPinAdd)==1){
+        if(millis()-time_start1 > 1000){
+           Serial.println("contious mode");
+           lcd.setCursor(8, 2); lcd.print(humid+staHumid); lcd.setCursor(14, 2); lcd.print("h"); lcd.print(staHumid);
+           staHumid += 0.01;       
+           delay(50);        
+        }      
+      }
+
+      while(digitalRead(interruptPin)==1){
+        if(millis()-time_start1 > 1000){
+           Serial.println("contious mode");
+           lcd.setCursor(8, 2); lcd.print(humid+staHumid); lcd.setCursor(14, 2); lcd.print("h"); lcd.print(staHumid);
+           staHumid -= 0.01;       
+           delay(50);        
+        }      
+      }
       
       Serial.print("staHumid::");  Serial.println(staHumid);
       
-      delay(100);
-      lcd.setCursor(8, 2); lcd.print("            ");
-      delay(300);
+      lcd.setCursor(8, 2); lcd.print("     "); lcd.setCursor(14, 2); lcd.print("      ");
+      delay(500);
       lcd.setCursor(8, 2); lcd.print(humid+staHumid); lcd.setCursor(14, 2); lcd.print("h"); lcd.print(staHumid);
-      delay(200);
+      delay(500);
       
     }
-    else{
+    while(staSet==2){
       Serial.println("out from setting mode**********************************");
       
       lcd.noBacklight();
@@ -229,61 +333,7 @@ void loop() {
     
 }
 
-void handleInterrupt() { 
 
- if(sta2==1){
-     
-
-      
-    if(staSet==0){
-      staTemp = staTemp-0.01;
-      Serial.print("Temp: ");    Serial.print(temp+staTemp);   lcd.setCursor(0, 1); lcd.print("Temp  : "); lcd.print(temp+staTemp);
-    }
-    if(staSet==1){
-      staHumid = staHumid-0.01;
-      Serial.print("\tHumid: "); Serial.print(humid+staHumid);  lcd.setCursor(0, 2); lcd.print("Humid : "); lcd.print(humid+staHumid); 
-    }
-    
-  
-      
- }
- else{
-
-
-    
-    Serial.println("Interrupt Detected");
-    lcd.backlight();
-    b = 1;
-    
-    if(sta==0){   //out from save mode
-      sta = 1;
-      digitalWrite(LED,HIGH); //LED off
-      digitalWrite(LED_savemode,HIGH); //LED off
-      Serial.println("OUT from save mode");
-      lcd.clear();
-      ESP.reset();
-      
-    }
-    else{   //to savemode
-      time_start = millis();
-      while(digitalRead(interruptPin)==1){
-        if(millis()-time_start > 3000){
-           Serial.println("save mode");
-           sta = 0;
-           digitalWrite(LED,LOW); //LED on 
-           digitalWrite(LED_savemode,LOW); //LED on 
-
-           lcd.backlight();
-           lcd.clear(); lcd.setCursor(0,1); lcd.print("    Wifi Hospot!    ");
-           lcd.setCursor(0,2); lcd.print("*******HT-A03*******");
-    
-           break;
-        }
-      }
-    } 
-
- }
-}
 
 void handleInterrupt2() { 
     Serial.println("Interrupt Detected 2..............");
@@ -319,21 +369,7 @@ void handleInterrupt2() {
 
 }
 
-void handleInterruptAdd() { 
-  if(sta2==1){
-    if(staSet==0){
-      staTemp = staTemp+0.01;
-      Serial.print("Temp: ");    Serial.print(temp+staTemp);   lcd.setCursor(0, 1); lcd.print("Temp  : "); lcd.print(temp+staTemp);
-  
-    }
-    if(staSet==1){
-      staHumid = staHumid+0.01;
-      Serial.print("\tHumid: "); Serial.print(humid+staHumid);  lcd.setCursor(0, 2); lcd.print("Humid : "); lcd.print(humid+staHumid); 
-    }
-    
-  }
-  
-}
+
 
 
 
@@ -547,4 +583,29 @@ int EEPROM_write(int index, String text) {
   EEPROM.commit();
   
   return text.length() + 1;
+}
+
+void handleInterruptAdd() { 
+  state = !state;
+  Serial.print("state: ");    Serial.print(state);
+
+  if(state==1){
+    if(sta2==1){
+    if(staSet==0){
+      time_start1 = millis();
+      staTemp = staTemp+0.01;
+      Serial.print("Temp: ");    Serial.print(temp+staTemp);   
+      lcd.setCursor(8, 1); lcd.print(temp+staTemp); lcd.setCursor(14, 1); lcd.print("t"); lcd.print(staTemp);
+  
+    }
+    if(staSet==1){
+      staHumid = staHumid+0.01;
+      Serial.print("\tHumid: "); Serial.print(humid+staHumid);  //lcd.setCursor(0, 2); lcd.print("Humid : "); lcd.print(humid+staHumid); 
+      lcd.setCursor(8, 2); lcd.print(humid+staHumid); lcd.setCursor(14, 2); lcd.print("h"); lcd.print(staHumid);
+    }
+    
+  }
+  }
+  
+  
 }
